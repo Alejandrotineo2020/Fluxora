@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fluxora</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a class="navbar-brand logo" href="#">Fluxora</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <form class="d-flex mx-auto my-2 my-lg-0" style="max-width:420px;width:100%;">
+          <input class="form-control me-2" type="search" id="searchInput" placeholder="Buscar productos..." onkeyup="filterProducts()">
+        </form>
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item">
+            <button class="btn position-relative me-3" onclick="showCart()">
+              <i class="fas fa-shopping-cart fa-xl text-primary"></i>
+              <span id="cartCountBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+            </button>
+          </li>
+          <li class="nav-item">
+            <a href="admin.html" class="btn btn-outline-primary">
+              <i class="fas fa-user-shield me-1"></i> Admin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero text-white text-center py-5 mt-5">
+    <div class="container">
+      <h1 class="display-4 fw-bold">Bienvenido a ShopMaster</h1>
+      <p class="lead">Productos seleccionados • Precios honestos • Entrega rápida</p>
+    </div>
+  </header>
+
+  <main class="container my-5">
+    <h2 class="text-center mb-5 fw-bold section-title">Nuestros Productos</h2>
+    <div class="row g-4" id="productsContainer"></div>
+  </main>
+
+  <footer class="bg-dark text-white text-center py-4">
+    <div class="container">
+      <p class="mb-0">© 2026 ShopMaster • Hecho en Santo Domingo</p>
+    </div>
+  </footer>
+
+  <!-- Modal producto -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title fw-bold" id="modalTitle"></h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-5 text-center mb-4 mb-md-0">
+              <img id="modalImage" class="img-fluid rounded-3 shadow" style="max-height:340px; object-fit:contain;">
+            </div>
+            <div class="col-md-7">
+              <p class="text-muted small mb-2" id="modalCategory"></p>
+              <p class="lead" id="modalDescription"></p>
+              <div class="d-flex align-items-center gap-3 my-4">
+                <h3 class="price mb-0" id="modalPrice"></h3>
+                <div class="input-group" style="width:150px;">
+                  <button class="btn btn-outline-secondary" onclick="changeModalQty(-1)">−</button>
+                  <input type="number" id="modalQuantity" class="form-control text-center" value="1" min="1">
+                  <button class="btn btn-outline-secondary" onclick="changeModalQty(1)">+</button>
+                </div>
+              </div>
+              <button class="btn btn-success btn-lg w-100" onclick="addToCartFromModal()">
+                <i class="fas fa-cart-plus me-2"></i> Agregar al carrito
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Offcanvas carrito -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title fw-bold">Tu Carrito (<span id="offcanvasCartCount">0</span>)</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body" id="cartItemsContainer"></div>
+    <div class="offcanvas-footer p-3 border-top bg-light">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">Total:</h5>
+        <h4 class="price mb-0" id="cartTotalPrice">$0.00</h4>
+      </div>
+      <button class="btn btn-success btn-lg w-100" onclick="showPaymentModal()">
+        <i class="fas fa-credit-card me-2"></i> Proceder al pago
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal pago -->
+  <div class="modal fade" id="paymentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title">Pago Seguro</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="paymentForm" onsubmit="processPayment(event)">
+            <div class="mb-3">
+              <label class="form-label">Nombre completo</label>
+              <input type="text" class="form-control" id="customerName" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Número de tarjeta</label>
+              <input type="text" class="form-control" id="cardNumber" maxlength="16" placeholder="4242424242424242" required>
+            </div>
+            <div class="row">
+              <div class="col-7">
+                <label class="form-label">Vencimiento (MM/AA)</label>
+                <input type="text" class="form-control" id="expDate" maxlength="5" placeholder="12/28" required>
+              </div>
+              <div class="col-5">
+                <label class="form-label">CVC</label>
+                <input type="text" class="form-control" id="cvc" maxlength="4" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg w-100 mt-4">
+              <i class="fas fa-check-circle me-2"></i> Pagar Ahora
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast position-fixed bottom-0 end-0 m-3" role="alert" id="mainToast">
+    <div class="toast-header bg-success text-white">
+      <strong class="me-auto">Fluxora</strong>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+    </div>
+    <div class="toast-body" id="toastMessage"></div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

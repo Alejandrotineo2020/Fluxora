@@ -1,0 +1,94 @@
+:root {
+  --primary: #6B48FF;
+  --success: #00D084;
+  --accent: #FF6B6B;
+  --dark: #1F2937;
+  --gray: #6B7280;
+  --light-bg: #F9FAFB;
+  --white: #FFFFFF;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--light-bg);
+  color: var(--dark);
+  margin: 0;
+}
+
+.navbar {
+  background: white;
+  box-shadow: 0 4px 14px rgba(107, 72, 255, 0.09);
+}
+
+.logo {
+  font-size: 1.85rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #6B48FF, #A78BFA);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero {
+  background: linear-gradient(135deg, #6B48FF 0%, #8B5CF6 100%);
+  padding-top: 7rem !important;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 2px;
+}
+
+.card {
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 24px 48px rgba(107, 72, 255, 0.22);
+}
+
+.card-img-top {
+  height: 240px;
+  object-fit: contain;
+  background: white;
+  padding: 24px 16px;
+}
+
+.price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--success);
+}
+
+.btn-primary { background: var(--primary); border: none; }
+.btn-primary:hover { background: #5B3BDD; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(107,72,255,0.35); }
+
+.btn-success { background: var(--success); border: none; }
+.btn-success:hover { background: #00B873; transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,208,132,0.35); }
+
+.modal-content, .offcanvas { border-radius: 24px; }
+.modal-header { background: linear-gradient(135deg, #6B48FF, #8B5CF6); color: white; border-radius: 24px 24px 0 0; }
+
+.sidebar .nav-link {
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  margin: 0.2rem 0;
+}
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+  background: rgba(255,255,255,0.1);
+}
+
+@media (max-width: 992px) {
+  .sidebar { width: 100% !important; height: auto !important; position: relative; }
+  .flex-grow-1 { margin-left: 0 !important; }
+}
